@@ -1,0 +1,26 @@
+{
+  "name": "silph-cup-randomizer",
+  "version": "1.0.0",
+  "description": "A simple bot for picking a Silph Cup to battle for Mirror",
+  "main": "bot.js",
+  "author": "ahnolds",
+  "dependencies": {
+    "discord.js": "^11.5.1"
+  },
+  "scripts": {
+    "test": "!hello"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ahnolds/SilphRandomizer.git"
+  },
+  "keywords": [
+    "npm",
+    "silph"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ahnolds/SilphRandomizer/issues"
+  },
+  "homepage": "https://github.com/ahnolds/SilphRandomizer#readme"
+}
