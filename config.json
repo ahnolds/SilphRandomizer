@@ -1,15 +1,3 @@
 {
-	"prefix": "!",
-	"seasons": {
-		"1": {
-			"Boulder": "rock, ground, fighting, steel",
-			"Twilight": "dark, fairy, poison, ghost",
-			"Tempest": "electric, ice, flying, ground",
-			"Kingdom": "fire, ice, dragon, steel",
-			"Nightmare": "psychic, dark, fighting (no legendary/mythical/sableye/medicham)",
-			"Rainbow": "fire, electric, bug, grass, water (gen 1/2 only)",
-			"Jungle": "electric, bug, grass, normal (no tropius/burmy family)",
-			"Regionals": "anything from Boulder, Twilight, Tempest, or Kingdom (aka ground, rock, steel, fighting, dark, poison, fairy, ghost, ice, electric, fire, flying, dragon)"
-		}
-	}
+	"prefix": "!"
 }

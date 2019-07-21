@@ -1,0 +1,36 @@
+[
+	[
+		{
+			"name": "Boulder",
+			"types": ["rock", "ground", "fighting", "steel"]
+		},
+		{
+			"name": "Twilight",
+			"types": ["dark", "fairy", "poison", "ghost"]
+		},
+		{
+			"name": "Tempest",
+			"types": ["electric", "ice", "flying", "ground"]
+		},
+		{
+			"name": "Kingdom",
+			"types": ["fire", "ice", "dragon", "steel"]
+		},
+		{
+			"name": "Nightmare",
+			"types": ["psychic", "dark", "fighting"], "restrictions": "no legendaries, mythicals, sableye, or medicham"
+		},
+		{
+			"name": "Rainbow",
+			"types": ["fire", "electric", "bug", "grass", "water"], "restrictions": "generations 1 & 2 only"
+		},
+		{
+			"name": "Jungle",
+			"types": ["electric", "bug", "grass", "normal"], "restrictions": "no tropius or burmy family"
+		},
+		{
+			"name": "Regionals",
+			"types": ["ground", "rock", "steel", "fighting", "dark", "poison", "fairy", "ghost", "ice", "electric", "fire", "flying", "dragon"]
+		}
+	]
+]

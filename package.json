@@ -5,10 +5,11 @@
   "main": "bot.js",
   "author": "ahnolds",
   "dependencies": {
-    "discord.js": "^11.5.1"
+    "discord.js": "^11.5.1",
+    "eslint": "^6.0.1"
   },
   "scripts": {
-    "test": "!hello"
+    "start": "node bot.js"
   },
   "repository": {
     "type": "git",
@@ -22,5 +23,6 @@
   "bugs": {
     "url": "https://github.com/ahnolds/SilphRandomizer/issues"
   },
-  "homepage": "https://github.com/ahnolds/SilphRandomizer#readme"
+  "homepage": "https://github.com/ahnolds/SilphRandomizer#readme",
+  "devDependencies": {}
 }
