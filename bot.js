@@ -1,7 +1,6 @@
 const Discord = require('discord.js');
 const {prefix} = require('./config.json');
 const seasons = require('./seasons.json');
-const {token} = require('./auth.json');
 const client = new Discord.Client();
 
 // https://discordapp.com/api/oauth2/authorize?client_id=601942294433890304&permissions=3072&scope=bot
@@ -61,4 +60,4 @@ client.on('message', message => {
 	 }
 });
  
-client.login(token);
+client.login(process.env.BOT_TOKEN);
