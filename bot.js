@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-const {prefix} = require('./config.json');
+const {prefix, lockRoleNames} = require('./config.json');
 const seasons = require('./seasons.json');
 const client = new Discord.Client();
 
