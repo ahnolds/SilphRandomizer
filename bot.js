@@ -9,6 +9,25 @@ client.once('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
 });
 
+// Functions for managing channel write permission
+function manageChannel(channel, canWrite, statusMsg) {
+	lockRoleNames.forEach(function (roleName) {
+		var role = channel.guild.roles.find(role => role.name === roleName);
+		channel.overwritePermissions(role, { SEND_MESSAGES: canWrite });
+	});
+	channel.send(`This channel has been ${statusMsg}!`);
+}
+function lockChannel(channel, time) {
+	if (time == 0) {
+		manageChannel(channel, false, "locked");
+	} else {
+		manageChannel(channel, false, `locked for ${time} hours`);
+	}
+}
+function unlockChannel(channel) {
+	manageChannel(channel, true, "unlocked");
+}
+
 function explanationString(tournament) {
 	var s = "";
 	switch (tournament.types.length) {
@@ -78,6 +97,47 @@ client.on('message', message => {
 				}
 			}
 			return message.channel.send(`${message.author}, there isn't a tournament named ${args[0]}!`);
+		break;
+		case 'lock': // fall-through
+		case 'unlock':
+			// Make sure we don't try to manage permissions on a DM or other funky thing
+			if (message.channel.type != "text") {
+				return message.channel.send(`${message.author}, I only manage permissions in guild text channels!`);
+			}
+			// Verify the user has permission to manage permissions on this channel
+			if (! message.member.permissionsIn(message.channel).has('MANAGE_ROLES')) {
+				return message.channel.send(`${message.author}, you aren't allowed to do that!`);
+			}
+			// Verify the bot will actually be able to manage the channel
+			if (! message.guild.me.permissionsIn(message.channel).has('MANAGE_ROLES')) {
+				return message.channel.send(`${message.author}, I can't manage permissions in this channel!`);
+			}
+			if (command == 'lock') {
+				// Verify arguments and lock channel
+				if (args.length > 1) {
+					return message.channel.send(`${message.author}, command unknown - "${prefix}lock <time>" to lock for <time> hours, "${prefix}lock" to lock indefinitely`);
+				}
+				var lockLength = 0
+				if (args.length == 1) {
+					lockLength = Number(args[0])
+					if (lockLength < 1 || lockLength > 48 || ! Number.isInteger(lockLength)) {
+						return message.channel.send(`${message.author}, command unknown - "${prefix}lock <time>" to lock for <time> hours, "${prefix}lock" to lock indefinitely`);
+					}
+				}
+				lockChannel(message.channel, lockLength);
+
+				// If the user specified an lock duration, schedule the unlock
+				if (args.length == 1) {
+					// Convert from hours to milliseconds and run later
+					setTimeout(unlockChannel, lockLength * 1000 * 60 * 60, message.channel)
+				}
+			} else if (command == 'unlock') {
+				// Verify arguments and unlock channel
+				if (args.length != 0) {
+					return message.channel.send(`${message.author}, the ${prefix}unlock command takes no arguments`);
+				}
+				unlockChannel(message.channel);
+			}
 		break;
 	 }
 });
