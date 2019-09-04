@@ -1,5 +1,6 @@
 const Discord = require('discord.js');
 const {prefix, lockRoleNames} = require('./config.json');
+//const {token} = require('./auth.json');
 const seasons = require('./seasons.json');
 const client = new Discord.Client();
 
@@ -17,11 +18,14 @@ function manageChannel(channel, canWrite, statusMsg) {
 	});
 	channel.send(`This channel has been ${statusMsg}!`);
 }
-function lockChannel(channel, time) {
+function lockChannel(channel, time, unit) {
 	if (time == 0) {
 		manageChannel(channel, false, "locked");
 	} else {
-		manageChannel(channel, false, `locked for ${time} hours`);
+		if (time > 1) {
+			unit = `${unit}s`
+		}
+		manageChannel(channel, false, `locked for ${time} ${unit}`);
 	}
 }
 function unlockChannel(channel) {
@@ -113,23 +117,58 @@ client.on('message', message => {
 				return message.channel.send(`${message.author}, I can't manage permissions in this channel!`);
 			}
 			if (command == 'lock') {
-				// Verify arguments and lock channel
-				if (args.length > 1) {
-					return message.channel.send(`${message.author}, command unknown - "${prefix}lock <time>" to lock for <time> hours, "${prefix}lock" to lock indefinitely`);
+				var lockSeconds = 0;
+				var unit = "hour"
+				var errMsg = `${message.author}, bad arguments:\n` +
+							 `  "${prefix}lock <time>" to lock for <time> hours\n` +
+							 `  "${prefix}lock <time> [days|hours|minutes|seconds]" to lock for the specified interval\n` +
+							 `  "${prefix}lock" to lock indefinitely`;
+				// Verify arguments
+				if (args.length > 2) {
+					return message.channel.send(errMsg);
 				}
 				var lockLength = 0
-				if (args.length == 1) {
+				if (args.length >= 1) {
+					// First argument is the time
 					lockLength = Number(args[0])
-					if (lockLength < 1 || lockLength > 48 || ! Number.isInteger(lockLength)) {
-						return message.channel.send(`${message.author}, command unknown - "${prefix}lock <time>" to lock for <time> hours, "${prefix}lock" to lock indefinitely`);
+					if (lockLength < 1 || ! Number.isInteger(lockLength)) {
+						return message.channel.send(errMsg);
 					}
 				}
-				lockChannel(message.channel, lockLength);
+				if (args.length >= 2) {
+					// Second argument is the units with an optional "s"
+					if (args[1].endsWith("s")) {
+						unit = args[1].slice(0, -1);
+					} else {
+						unit = args[1];
+					}
+				}
 
-				// If the user specified an lock duration, schedule the unlock
-				if (args.length == 1) {
-					// Convert from hours to milliseconds and run later
-					setTimeout(unlockChannel, lockLength * 1000 * 60 * 60, message.channel)
+				// Convert to seconds
+				if (unit == "second") {
+					lockSeconds = lockLength;
+				} else if (unit == "minute") {
+					lockSeconds = lockLength * 60;
+				} else if (unit == "hour") {
+					lockSeconds = lockLength * 60 * 60;
+				} else if (unit == "day") {
+					lockSeconds = lockLength * 60 * 60 * 24;
+				} else {
+					return message.channel.send(errMsg);
+				}
+
+				// Don't overflow the max time
+				if (lockSeconds * 1000 > 2**31 - 1) {
+					return message.channel.send(`${message.author}, I can't lock for that long!`);
+				}
+
+				// Acutally lock the channel and show the message
+				lockChannel(message.channel, lockLength, unit);
+
+				// If the user specified a lock duration, schedule the unlock
+				if (lockSeconds != 0) {
+					// Convert from seconds to milliseconds and run later
+					setTimeout(unlockChannel, lockSeconds * 1000, message.channel)
 				}
 			} else if (command == 'unlock') {
 				// Verify arguments and unlock channel
@@ -143,3 +182,4 @@ client.on('message', message => {
 });
  
 client.login(process.env.BOT_TOKEN);
+//client.login(token);
