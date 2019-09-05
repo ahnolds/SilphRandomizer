@@ -20,7 +20,7 @@ function manageChannel(channel, canWrite, statusMsg) {
 	channel.send(`This channel has been ${statusMsg}!`);
 }
 function lockChannel(channel, time, unit) {
-	if (time == 0) {
+	if (time === undefined || time == 0) {
 		manageChannel(channel, false, "locked");
 	} else {
 		if (time > 1) {
@@ -104,7 +104,9 @@ client.on('message', message => {
 			return message.channel.send(`${message.author}, there isn't a tournament named ${args[0]}!`);
 		break;
 		case 'lock': // fall-through
-		case 'unlock':
+		case 'unlock': // fall-through
+		case 'schedule-lock': // fall-through
+		case 'schedule-unlock':
 			// Make sure we don't try to manage permissions on a DM or other funky thing
 			if (message.channel.type != "text") {
 				return message.channel.send(`${message.author}, I only manage permissions in guild text channels!`);
@@ -177,6 +179,26 @@ client.on('message', message => {
 					return message.channel.send(`${message.author}, the ${prefix}unlock command takes no arguments`);
 				}
 				unlockChannel(message.channel);
+			} else if (command == 'schedule-lock' || command == 'schedule-unlock') {
+				var allArgs = message.content.slice(prefix.length + command.length).trim();
+				if (allArgs.length < 1) {
+					return message.channel.send(`${message.author}, usage: ${prefix}${command} <time to act at>`);
+				}
+				const now = moment.tz('America/New_York');
+				const actTime = moment.tz(allArgs, 'America/New_York');
+				if (! actTime.isValid()) {
+					return message.channel.send(`${message.author}, I can't understand that date!`);
+				}
+				if (actTime <= now) {
+					return message.channel.send(`${message.author}, pick a time in the future!`);
+				}
+				if (command == 'schedule-lock') {
+					message.channel.send(`Channel will be locked at ${actTime.format('MMMM Do YYYY, h:mm:ss a')}`);
+					setTimeout(lockChannel, actTime - now, message.channel);
+				} else if (command == 'schedule-unlock') {
+					message.channel.send(`Channel will be unlocked at ${actTime.format('MMMM Do YYYY, h:mm:ss a')}`);
+					setTimeout(unlockChannel, actTime - now, message.channel);
+				}
 			}
 		break;
 	 }
