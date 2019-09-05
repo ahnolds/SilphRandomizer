@@ -120,10 +120,10 @@ client.on('message', message => {
 			if (command == 'lock') {
 				var lockSeconds = 0;
 				var unit = "hour"
-				var errMsg = `${message.author}, bad arguments:\n` +
-							 `  "${prefix}lock <time>" to lock for <time> hours\n` +
-							 `  "${prefix}lock <time> [days|hours|minutes|seconds]" to lock for the specified interval\n` +
-							 `  "${prefix}lock" to lock indefinitely`;
+				var errMsg = `${message.author}, bad arguments provided, options are:\n` +
+							 `\t\t"${prefix}lock <time>" to lock for <time> hours\n` +
+							 `\t\t"${prefix}lock <time> [days|hours|minutes|seconds]" to lock for the specified interval\n` +
+							 `\t\t"${prefix}lock" to lock indefinitely`;
 				// Verify arguments
 				if (args.length > 2) {
 					return message.channel.send(errMsg);
