@@ -6,7 +6,9 @@
   "author": "ahnolds",
   "dependencies": {
     "discord.js": "^11.5.1",
-    "eslint": "^6.0.1"
+    "eslint": "^6.0.1",
+    "moment": "^2.24.0",
+    "moment-timezone": "^0.5.26"
   },
   "scripts": {
     "start": "node bot.js"
