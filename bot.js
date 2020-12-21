@@ -14,8 +14,8 @@ client.once('ready', () => {
 // Functions for managing channel write permission
 function manageChannel(channel, canWrite, statusMsg) {
 	lockRoleNames.forEach(function (roleName) {
-		var role = channel.guild.roles.find(role => role.name === roleName);
-		channel.overwritePermissions(role, { SEND_MESSAGES: canWrite });
+		var role = channel.guild.roles.cache.find(role => role.name === roleName);
+		channel.updateOverwrite(role, { SEND_MESSAGES: canWrite });
 	});
 	channel.send(`This channel has been ${statusMsg}!`);
 }
